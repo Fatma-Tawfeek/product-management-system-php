@@ -1,5 +1,5 @@
-<?php include 'inc/header.php'; ?>
-<?php include 'database/database.php';
+<?php include '../inc/header.php'; ?>
+<?php include '../database/connection.php';
 
 
 $sql = "SELECT * from `users`";
@@ -10,7 +10,7 @@ $result = mysqli_query($conn, $sql);
 
 <div class="container-fluid">
  <div class="row vh-100">
-    <?php include 'inc/sidebar.php'; ?>
+    <?php include '../inc/sidebar.php'; ?>
 
     <div class="col mt-5">
         <!-- ADD Product button -->
@@ -28,7 +28,7 @@ $result = mysqli_query($conn, $sql);
             </div>
             <div class="modal-body">
                 <!-- product add form -->
-               <form class="row g-3" id="add" action="handlers/users/store.php" method="post">
+               <form class="row g-3" id="add" action="../handlers/users/store.php" method="post">
                 <div class="col-12">
                     <label for="inputname4" class="form-label">Name</label>
                     <input type="text" name="name" class="form-control" id="inputname4">
@@ -37,9 +37,17 @@ $result = mysqli_query($conn, $sql);
                     <label for="inputPassword4" class="form-label">Email</label>
                     <input type="email" name="email" class="form-control" id="inputPassword4">
                 </div>
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <label for="inputAddress2" class="form-label">Phone</label>
                     <input type="number" name="phone" class="form-control" id="inputAddress2">
+                </div>
+                <div class="col-md-6">
+                    <label for="inputState" class="form-label">Role</label>
+                    <select id="inputState" class="form-select" name="role">
+                    <option selected>Choose...</option>
+                    <option value="0">User</option>
+                    <option value="1">Admin</option>
+                    </select>
                 </div>
                 <div class="col-md-12">
                     <label for="inputAddress" class="form-label">Password</label>
@@ -63,6 +71,18 @@ $result = mysqli_query($conn, $sql);
                 ?>
             </div>
         <?php endif; ?>
+
+        <?php 
+                if(isset($_SESSION['errors'])):
+                  foreach($_SESSION['errors'] as $error): ?>
+                      <div class="alert alert-danger text-center mt-5">
+                        <?= $error; ?>
+                      </div>
+                  <?php                  
+                endforeach;             
+               unset($_SESSION['errors']);
+              endif;   
+                ?>
        
         <table class="table table-striped mt-5">
             <thead>
@@ -71,6 +91,7 @@ $result = mysqli_query($conn, $sql);
                 <th scope="col">Name</th>
                 <th scope="col">Email</th>
                 <th scope="col">Phone</th>
+                <td scope="col">Role</td>
                 <th scope="col">Actions</th>
                 </tr>
             </thead>
@@ -81,16 +102,21 @@ $result = mysqli_query($conn, $sql);
                 <td><?= $row['name']; ?></td>
                 <td><?= $row['email']; ?></td>
                 <td><?= $row['phone']; ?></td>
+                <td><?php 
+                if ($row['role'] == 1){
+                    echo "Admin";
+                } else {
+                    echo "User";
+                }                  
+                 ?></td>
                 <td>
                   
                     <!-- Edit Product button -->
                     <a class="btn btn-info"  data-bs-toggle="modal" data-bs-target="#editModal<?= $row["id"]; ?>"><i class="fa-solid fa-edit"></i> </a>
 
-                    <a href="handlers/users/delete.php?id=<?= $row["id"]; ?>" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> </a>
-                </td>
-                </tr>
+                    <a href="../handlers/users/delete.php?id=<?= $row["id"]; ?>" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> </a>
 
-                <!-- edit product form -->
+                                    <!-- edit product form -->
                 <div class="modal fade" id="editModal<?= $row["id"];?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -100,9 +126,9 @@ $result = mysqli_query($conn, $sql);
                         </div>
                         <div class="modal-body">
                             <!-- product edit form -->
-                        <form class="row g-3" id="edit" action="handlers/users/update.php" method="post">
+                        <form class="row g-3" id="edit" action="../handlers/users/update.php" method="post">
 
-                        <input name="id" value="<?= $row['id'];?>">
+                        <input name="id" type="hidden" value="<?= $row['id'];?>">
                            
                             <div class="col-12">
                                 <label for="inputEmail4" class="form-label">Name</label>
@@ -112,13 +138,21 @@ $result = mysqli_query($conn, $sql);
                                 <label for="inputAddress2" class="form-label">Email</label>
                                 <input type="email" name="email" class="form-control" id="inputAddress2" value="<?= $row['email'] ?>">
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <label for="inputPassword4" class="form-label">Phone</label>
                                 <input type="number" name="phone" class="form-control" id="inputPassword4" value="<?= $row['phone'] ?>" >
                             </div>
+                            <div class="col-md-6">
+                                <label for="inputState" class="form-label">Role</label>
+                                <select id="inputState" class="form-select" name="role">
+                                <option selected>Choose...</option>
+                                <option value="0" <?= $row['role'] == 0 ? 'selected' : ''; ?>>User</option>
+                                <option value="1" <?= $row['role'] == 1 ? 'selected' : ''; ?>>Admin</option>
+                                </select>
+                            </div>
                             <div class="col-md-12">
                                 <label for="inputAddress" class="form-label">Password</label>
-                                <input type="password" name="password" class="form-control" id="inputAddress" value="<?= $row['password'] ?>">
+                                <input type="password" name="password" class="form-control" id="inputAddress">
                             </div>
                             </form>
                         </div>
@@ -129,6 +163,10 @@ $result = mysqli_query($conn, $sql);
                         </div>
                     </div>
                     </div>
+                </td>
+                </tr>
+
+
 
                 <?php endwhile;?>
             </tbody>
@@ -138,4 +176,4 @@ $result = mysqli_query($conn, $sql);
  </div>
 
 
-<?php include 'inc/footer.php'; ?>
+<?php include '../inc/footer.php'; ?>

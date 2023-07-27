@@ -2,7 +2,7 @@
 
 session_start();
 
-include '../../database/database.php';
+include '../../database/connection.php';
 
 if(isset($_GET["id"])) {
 
@@ -22,5 +22,5 @@ if(isset($_GET["id"])) {
 
     // redirection
 
-    header("location: ../../users.php");
+    header("location: ../../views/users.php");
 }

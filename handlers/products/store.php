@@ -2,24 +2,68 @@
 
 session_start();
 
-include '../../database/database.php';
+include '../../database/connection.php';
+include '../../core/functions.php';
+include '../../core/validations.php';
 
-if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["name"])) {
+if(checkRequestMethod("POST") && isset($_POST["name"])) {
 
-    $name = trim(htmlspecialchars(htmlentities($_POST["name"])));
-    $price = $_POST["price"];
-    $brand = trim(htmlspecialchars(htmlentities($_POST["brand"])));
-    $color = trim(htmlspecialchars(htmlentities($_POST["color"])));
-    $cat_id = $_POST["cate_id"];
-
-
-    $sql = "INSERT INTO `products`(`name`, `price`, `brand`, `color`, `category_id`) VALUES('$name', '$price', '$brand', '$color', '$cat_id')";
-    $result = mysqli_query($conn, $sql);
-    if(mysqli_affected_rows($conn) == 1) {
-        $_SESSION['success'] = "Data is inserted successfully";
+    foreach($_POST as $key => $value) {
+        $$key = sanitizeInput($value);
     }
 
-    // redirection
+     // Name validations
+     if(!requiredVal($name)) {
+        $errors[] = "name is required";
+    } elseif(!minVal($name, 3)) {
+        $errors[] = "name must be more than 3 chars";
+    } elseif(!maxVal($name, 25)) {
+        $errors[] = "name must be less than 25 chars";
+    }
 
-    header("location: ../../index.php");
+    // brand validations
+    if(!requiredVal($brand)) {
+        $errors[] = "brand is required";
+    } elseif(!minVal($brand, 2)) {
+        $errors[] = "brand must be more than 3 chars";
+    } elseif(!maxVal($brand, 25)) {
+        $errors[] = "brand must be less than 25 chars";
+    }
+
+    // quantity validations
+    if(!requiredVal($quantity)) {
+        $errors[] = "quantity is required";
+    } 
+
+    // price validations
+    if(!requiredVal($price)) {
+        $errors[] = "price is required";
+    }
+
+    // price validations
+    if(!requiredVal($cat_id)) {
+        $errors[] = "category is required";
+    }
+
+    if(empty($errors)) {
+
+        $name = $_POST['name'];
+        $brand = $_POST['brand'];
+        $quantity = $_POST['quantity'];
+        $price = $_POST['price'];
+        $cat_id = $_POST['cat_id'];
+
+        $sql = "INSERT INTO `products`(`name`, `price`, `brand`, `quantity`, `category_id`) VALUES('$name', '$price', '$brand', '$quantity', '$cat_id')";
+        $result = mysqli_query($conn, $sql);
+        if(mysqli_affected_rows($conn) == 1) {
+            $_SESSION['success'] = "Data is inserted successfully";
+        }
+        // redirection
+        redirect("../../views/products.php");
+        die();
+    } else {
+        $_SESSION['errors'] = $errors;
+        redirect("../../views/products.php");
+        die();
+    }
 }
