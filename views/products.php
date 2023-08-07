@@ -121,11 +121,25 @@ $result = mysqli_query($conn, $sql);
 
                     <a href="../handlers/products/delete.php?id=<?= $row["id"]; ?>" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> </a>
 
-                    <a href="../handlers/products/store-cart.php?user_id=<?= $_SESSION['auth'][0]; ?>&product_id=<?= $row['id']; ?>&price=<?= $row['price'];?>" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> Add to cart </a>
+                    <button class="btn btn-primary" form="cart" type="submit"><i class="fa-solid fa-cart-shopping"></i> Add to cart </button>
 
                     <?php else: ?>
-                        <a href="../handlers/products/store-cart.php?user_id=<?= $_SESSION['auth'][0]; ?>&product_id=<?= $row['id']; ?>&price=<?= $row['price'];?>" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> Add to cart </a>
+                        <button class="btn btn-primary" form="cart" type="submit"><i class="fa-solid fa-cart-shopping"></i> Add to cart </button>
                     <?php endif ?>
+
+                
+                    <!-- add to cart form -->
+
+                    <form action="../handlers/cart/store.php" method="post" id="cart">
+
+                    <input type="number" name="qt" placeholder="Quantity" class="rounded mt-2" min="1" required>
+
+                    <input type="hidden" name="product_id" value="<?= $row['id'];?>">
+                    <input type="hidden" name="user_id" value="<?= $_SESSION['auth'][0];?>">
+                    <input type="hidden" name="price" value="<?= $row['price'];?>">
+                    <input type="hidden" name="quantity" value="<?= $row['quantity'];?>">
+
+                    </form>
 
                     <!-- edit product form -->
                 <div class="modal fade" id="editModal<?= $row["id"];?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

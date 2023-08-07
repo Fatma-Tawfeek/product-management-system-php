@@ -28,14 +28,6 @@ if(checkRequestMethod("POST") && checkPostInput('name')) {
     } elseif(!emailVal($email)) {
         $errors[] = "please type a valid email";
     }
- 
-
-    // Password validations
-   if(!minVal($password, 6)) {
-        $errors[] = "password must be more than 6 chars";
-    } elseif(!maxVal($password, 20)) {
-        $errors[] = "password must be less than 20 chars";
-    }
 
     if(empty($errors)) {
 

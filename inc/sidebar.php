@@ -36,12 +36,14 @@ $activePage = basename($_SERVER['PHP_SELF'], ".php");
           Cart
         </a>
       </li>
+      <?php if($_SESSION['auth'][2] == 1): ?>
       <li>
-        <a href="#" class="nav-link link-dark">
+        <a href="/views/orders.php" class="nav-link link-dark <?= ($activePage == 'orders') ? 'active':''; ?>">
          <i class="fa-solid fa-truck-fast me-2"></i>
           orders
         </a>
       </li>
+      <?php endif; ?>
     </ul>
     <hr>
     <?php endif; ?>

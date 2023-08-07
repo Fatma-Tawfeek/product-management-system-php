@@ -45,7 +45,8 @@ if(checkRequestMethod("POST") && checkPostInput('name')) {
             $name = $_POST["name"];
             $email = $_POST["email"];
             $phone = $_POST["phone"];
-            $password = sha1($_POST["password"]);
+            $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+                        
             include '../../database/connection.php';
 
             $sql = "INSERT INTO `users`(`name`, `email`, `phone`, `password`) VALUES('$name', '$email', '$phone', '$password')";

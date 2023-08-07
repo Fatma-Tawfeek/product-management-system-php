@@ -1,7 +1,7 @@
 <?php 
 
 function requiredVal($input) {
-    if(empty($input)) {
+    if(!isset($input)) {
         return false;
     }
     return true;
@@ -40,17 +40,31 @@ function uniqueEmail($email) {
 }
  
 function checkLogin($email, $password) {
+
+
+
    include '../../database/connection.php';
-   $sql = "SELECT * FROM `users` where `email` = '$email' AND `password` = '$password'";
+   $sql = "SELECT * FROM `users` where `email` = '$email'";
    $result = mysqli_query($conn, $sql);   
+
+   $row = mysqli_fetch_assoc($result);
+
    $count = mysqli_num_rows($result);  
     
    if($count == 1){  
-      $row = mysqli_fetch_assoc($result); 
+
+
+    if(password_verify($password, $row['password'])){ 
       $_SESSION['auth'] = [$row['id'], $row['name'], $row['role']];
       return true;  
    }  
    else{  
        return false;  
-   }     
+   }  
+   
+   
+   } else{  
+    return false;  
+   }  
+
 }
