@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 27, 2023 at 12:43 AM
+-- Generation Time: Aug 12, 2023 at 04:11 PM
 -- Server version: 5.7.33
 -- PHP Version: 8.2.6
 
@@ -45,6 +45,10 @@ CREATE TABLE `categories` (
   `cat_name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32;
 
+--
+-- Dumping data for table `categories`
+--
+
 -- --------------------------------------------------------
 
 --
@@ -54,9 +58,11 @@ CREATE TABLE `categories` (
 CREATE TABLE `orders` (
   `id` bigint(20) NOT NULL,
   `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` enum('0,1,2') NOT NULL,
+  `status` enum('0','1','2') NOT NULL DEFAULT '0',
   `address` varchar(255) NOT NULL,
-  `user_id` bigint(20) NOT NULL
+  `payment_method` varchar(255) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `total` decimal(10,0) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32;
 
 -- --------------------------------------------------------
@@ -82,11 +88,26 @@ CREATE TABLE `products` (
 
 CREATE TABLE `product_cart` (
   `id` int(11) NOT NULL,
-  `cart_price` decimal(10,0) NOT NULL,
-  `cart_quantity` int(11) NOT NULL DEFAULT '1',
-  `total` decimal(10,0) NOT NULL,
   `product_id` bigint(20) NOT NULL,
-  `cart_id` bigint(20) NOT NULL
+  `cart_id` bigint(20) NOT NULL,
+  `price` decimal(10,0) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `total` decimal(10,0) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf32;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `product_order`
+--
+
+CREATE TABLE `product_order` (
+  `id` int(11) NOT NULL,
+  `order_id` bigint(11) NOT NULL,
+  `product_id` bigint(11) NOT NULL,
+  `price` decimal(10,0) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `total` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32;
 
 -- --------------------------------------------------------
@@ -144,6 +165,14 @@ ALTER TABLE `product_cart`
   ADD KEY `product_cart_product_id_foreign` (`product_id`);
 
 --
+-- Indexes for table `product_order`
+--
+ALTER TABLE `product_order`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `order_id` (`order_id`),
+  ADD KEY `product_id` (`product_id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -158,7 +187,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `carts`
 --
 ALTER TABLE `carts`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -170,25 +199,31 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `product_cart`
 --
 ALTER TABLE `product_cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `product_order`
+--
+ALTER TABLE `product_order`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
@@ -218,6 +253,13 @@ ALTER TABLE `products`
 ALTER TABLE `product_cart`
   ADD CONSTRAINT `product_cart_cart_id_foreign` FOREIGN KEY (`cart_id`) REFERENCES `carts` (`id`),
   ADD CONSTRAINT `product_cart_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
+
+--
+-- Constraints for table `product_order`
+--
+ALTER TABLE `product_order`
+  ADD CONSTRAINT `product_order_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
+  ADD CONSTRAINT `product_order_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

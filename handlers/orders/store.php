@@ -2,23 +2,23 @@
 
 session_start();
 
-include '../../database/connection.php';
-include '../../core/functions.php';
-include '../../core/validations.php';
+require_once '../../database/connection.php';
+require_once '../../core/functions.php';
+require_once '../../core/Validation.php';
 
-if(checkRequestMethod("POST") && isset($_POST["address"])) {
+if(checkRequestMethod("POST")) {
 
     foreach($_POST as $key => $value) {
         $$key = $value;
     }
 
      // address validations
-     if(!requiredVal($address)) {
+     if(!Validation::requiredVal($address)) {
         $errors[] = "address is required";
     } 
 
     // payment_method validations
-    if(!requiredVal($payment_method)) {
+    if(!Validation::requiredVal($payment_method)) {
         $errors[] = "payment_method is required";
     } 
 

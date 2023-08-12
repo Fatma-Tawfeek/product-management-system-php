@@ -2,22 +2,22 @@
 
 session_start();
 
-include '../../database/connection.php';
-include '../../core/functions.php';
-include '../../core/validations.php';
+require_once '../../database/connection.php';
+require_once '../../core/functions.php';
+require_once '../../core/Validation.php';
 
-if(checkRequestMethod("POST") && isset($_POST["name"])) {
+if(checkRequestMethod("POST")) {
 
     foreach($_POST as $key => $value) {
         $$key = sanitizeInput($value);
     }
 
      // Name validations
-     if(!requiredVal($name)) {
+     if(!Validation::requiredVal($name)) {
         $errors[] = "name is required";
-    } elseif(!minVal($name, 3)) {
+    } elseif(!Validation::minVal($name, 3)) {
         $errors[] = "name must be more than 3 chars";
-    } elseif(!maxVal($name, 25)) {
+    } elseif(!Validation::maxVal($name, 25)) {
         $errors[] = "name must be less than 25 chars";
     }
 

@@ -1,7 +1,6 @@
 <?php include '../inc/header.php'; ?>
 <?php include_once '../database/connection.php';
 
-
 $sql = "SELECT * from `products` LEFT JOIN `categories` ON products.category_id = categories.cat_id";
 
 $result = mysqli_query($conn, $sql);
@@ -11,7 +10,13 @@ $result = mysqli_query($conn, $sql);
 <div class="container-fluid"> 
  <div class="row vh-100">
     <?php include '../inc/sidebar.php'; ?>
- 
+    <?php 
+    if (!isset($_SESSION['auth'])){
+    header("Location: login.php");
+    exit;
+    }
+    ?>
+    
     <div class="col mt-5">
     <?php if($_SESSION['auth'][2] == 1): ?>
         <!-- ADD Product button -->
@@ -117,7 +122,7 @@ $result = mysqli_query($conn, $sql);
                   
                     <!-- Edit Product button -->
                     <?php if($_SESSION['auth'][2] == 1): ?>
-                    <a class="btn btn-info"  data-bs-toggle="modal" data-bs-target="#editModal<?= $row["id"]; ?>"><i class="fa-solid fa-edit"></i> </a>
+                    <a class="btn btn-info" href="edit-product.php?id=<?= $row["id"]; ?>"><i class="fa-solid fa-edit"></i> </a>
 
                     <a href="../handlers/products/delete.php?id=<?= $row["id"]; ?>" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> </a>
 
@@ -132,7 +137,7 @@ $result = mysqli_query($conn, $sql);
 
                     <form action="../handlers/cart/store.php" method="post" id="cart">
 
-                    <input type="number" name="qt" placeholder="Quantity" class="rounded mt-2" min="1" required>
+                    <input type="number" name="qt" placeholder="Quantity" class="rounded mt-2" min="1">
 
                     <input type="hidden" name="product_id" value="<?= $row['id'];?>">
                     <input type="hidden" name="user_id" value="<?= $_SESSION['auth'][0];?>">
@@ -140,58 +145,6 @@ $result = mysqli_query($conn, $sql);
                     <input type="hidden" name="quantity" value="<?= $row['quantity'];?>">
 
                     </form>
-
-                    <!-- edit product form -->
-                <div class="modal fade" id="editModal<?= $row["id"];?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Edit Product</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <!-- product edit form -->
-                        <form class="row g-3" id="edit" action="../handlers/products/update.php" method="post">
-
-                        <input type="hidden" name="id" value="<?= $row['id'];?>">
-                           
-                            <div class="col-12">
-                                <label for="inputEmail4" class="form-label">Name</label>
-                                <input type="text" name="name" class="form-control" id="inputEmail4" value="<?= $row['name'] ?>">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="inputPassword4" class="form-label">Price</label>
-                                <input type="number" name="price" class="form-control" id="inputPassword4" value="<?= $row['price'] ?>" >
-                            </div>
-                            <div class="col-md-6">
-                                <label for="inputState" class="form-label">Category</label>
-                                <select id="inputState" class="form-select" name="cat_id">
-                                <?php
-                                $sql_cat = "SELECT * from `categories`";
-                                $result_cat = mysqli_query($conn, $sql_cat);
-                                while($row_cat = mysqli_fetch_assoc($result_cat)): 
-                                ?>
-                                <option value="<?= $row_cat['cat_id']?>" <?= $row['category_id'] == $row_cat['cat_id'] ? 'selected' : ''; ?>><?=$row_cat['cat_name']?></option>
-                                <?php endwhile; ?>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="inputAddress" class="form-label">Quantity</label>
-                                <input type="number" name="quantity" class="form-control" id="inputAddress" value="<?= $row['quantity'] ?>">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="inputAddress2" class="form-label">Brand</label>
-                                <input type="text" name="brand" class="form-control" id="inputAddress2" value="<?= html_entity_decode($row['brand']) ?>">
-                            </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" form="edit" class="btn btn-primary">Edit</button>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
                 </td>
                 </tr>
                 <?php endwhile;?>

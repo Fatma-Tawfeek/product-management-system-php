@@ -2,41 +2,41 @@
 
 session_start();
 
-include '../../core/functions.php';
-include '../../core/validations.php';
+require_once '../../core/functions.php';
+require_once '../../core/Validation.php';
 
 $errors = [];
 
-if(checkRequestMethod("POST") && checkPostInput('name')) {
+if(checkRequestMethod("POST")) {
     foreach($_POST as $key => $value) {
         $$key = sanitizeInput($value);
     }
 
-    // Name validations
-    if(!requiredVal($name)) {
-        $errors[] = "name is required";
-    } elseif(!minVal($name, 3)) {
+   // Name validations
+   if(!Validation::requiredVal($name)) {
+       $errors[] = "name is required";
+    } elseif(!Validation::minVal($name, 3)) {
         $errors[] = "name must be more than 3 chars";
-    } elseif(!maxVal($name, 25)) {
+    } elseif(!Validation::maxVal($name, 25)) {
         $errors[] = "name must be less than 25 chars";
     }
 
     // Email validations
-    if(!requiredVal($email)) {
+    if(!Validation::requiredVal($email)) {
         $errors[] = "email is required";
-    } elseif(!emailVal($email)) {
+    } elseif(!Validation::emailVal($email)) {
         $errors[] = "please type a valid email";
-    } elseif(!uniqueEmail($email)){
+    } elseif(!Validation::uniqueEmail($email)){
         $errors[] = "This Email already exists";
     }
- 
+
 
     // Password validations
-    if(!requiredVal($password)) {
+    if(!Validation::requiredVal($password)) {
         $errors[] = "password is required";
-    } elseif(!minVal($password, 6)) {
+    } elseif(!Validation::minVal($password,6)) {
         $errors[] = "password must be more than 6 chars";
-    } elseif(!maxVal($password, 20)) {
+    } elseif(!Validation::maxVal($password, 20)) {
         $errors[] = "password must be less than 20 chars";
     }
 
@@ -47,7 +47,7 @@ if(checkRequestMethod("POST") && checkPostInput('name')) {
             $phone = $_POST["phone"];
             $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
                         
-            include '../../database/connection.php';
+            require '../../database/connection.php';
 
             $sql = "INSERT INTO `users`(`name`, `email`, `phone`, `password`) VALUES('$name', '$email', '$phone', '$password')";
             $result = mysqli_query($conn, $sql);

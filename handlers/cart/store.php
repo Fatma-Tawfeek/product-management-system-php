@@ -2,9 +2,18 @@
 
 session_start();
 
-include '../../database/connection.php';
-include '../../core/functions.php';
-include '../../core/validations.php';
+require_once '../../database/connection.php';
+require_once '../../core/functions.php';
+require_once '../../core/Validation.php';
+
+
+if(checkRequestMethod("POST")) {
+
+    foreach($_POST as $key => $value) {
+        $$key = sanitizeInput($value);
+    }
+
+    if(empty($errors)) {
 
    $user_id = $_POST['user_id'];
    $product_id = $_POST['product_id'];
@@ -62,3 +71,10 @@ include '../../core/validations.php';
     redirect("../../views/products.php");
     die();
    }
+}else {
+    $_SESSION['errors'] = $errors;
+    redirect("../../views/products.php");
+    die();
+}
+
+}

@@ -16,6 +16,14 @@ $data = mysqli_query($conn, $sql);
 <div class="container-fluid">
  <div class="row vh-100">
     <?php include '../inc/sidebar.php'; ?>
+    <?php 
+
+    if (!isset($_SESSION['auth'])){
+    header("Location: login.php");
+    exit;
+    }
+
+    ?>
 
     <div class="col mt-5">
    
@@ -117,8 +125,8 @@ $data = mysqli_query($conn, $sql);
                         <label for="inputState" class="form-label">Payment Method</label>
                         <select id="inputState" class="form-select" name="payment_method" required>
                         <option value="">Choose...</option>
-                        <option value="0">Visa or Mastecard</option>
-                        <option value="1">Cash on delivery</option>
+                        <option value="1">Visa or Mastecard</option>
+                        <option value="2">Cash on delivery</option>
                         </select>
                     </div>
 

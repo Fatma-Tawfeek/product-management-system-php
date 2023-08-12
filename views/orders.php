@@ -3,11 +3,11 @@
 <?php 
 
 $sql = "SELECT `products`.`name`, `product_order`.`quantity`,`product_order`.`total`, `orders`.`status`, `orders`.`address`, `orders`.`payment_method`,`orders`.`date`, `orders`.`id`
-FROM `products`
-INNER JOIN `product_order`
-ON `products`.`id` = `product_order`.`product_id` 
+FROM `product_order`
 INNER JOIN `orders`
-ON `product_order`.`order_id` = `orders`.`id`";
+ON `product_order`.`order_id` = `orders`.`id`
+INNER JOIN `products`
+ON `products`.`id` = `product_order`.`product_id`";
 
 $result = mysqli_query($conn, $sql);
 
@@ -16,6 +16,12 @@ $result = mysqli_query($conn, $sql);
 <div class="container-fluid">
  <div class="row vh-100">
     <?php include '../inc/sidebar.php'; ?>
+    <?php 
+    if (!isset($_SESSION['auth'])){
+    header("Location: login.php");
+    exit;
+    }
+    ?>
 
     <div class="col mt-5">
    
@@ -65,7 +71,7 @@ $result = mysqli_query($conn, $sql);
                     <td><?= $row['address'] ?></td>
                     <td>
                         <?php
-                         if($row['payment_method'] == 0){
+                         if($row['payment_method'] == '1'){
                             echo '<p>Visa or Mastecard</p>';
                          } else {
                             echo '<p>Cash on delivery</p>';

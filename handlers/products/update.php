@@ -2,46 +2,46 @@
 
 session_start();
 
-include '../../database/connection.php';
-include '../../core/functions.php';
-include '../../core/validations.php';
+require_once '../../database/connection.php';
+require_once '../../core/functions.php';
+require_once '../../core/Validation.php';
 
-if(checkRequestMethod("POST") && isset($_POST["name"])) {
+if(checkRequestMethod("POST")) {
 
     foreach($_POST as $key => $value) {
         $$key = sanitizeInput($value);
     }
 
      // Name validations
-     if(!requiredVal($name)) {
+     if(!Validation::requiredVal($name)) {
         $errors[] = "name is required";
-    } elseif(!minVal($name, 3)) {
+    } elseif(!Validation::minVal($name, 3)) {
         $errors[] = "name must be more than 3 chars";
-    } elseif(!maxVal($name, 25)) {
+    } elseif(!Validation::maxVal($name, 25)) {
         $errors[] = "name must be less than 25 chars";
     }
 
     // brand validations
-    if(!requiredVal($brand)) {
+    if(!Validation::requiredVal($brand)) {
         $errors[] = "brand is required";
-    } elseif(!minVal($brand, 2)) {
+    } elseif(!Validation::minVal($brand, 2)) {
         $errors[] = "brand must be more than 3 chars";
-    } elseif(!maxVal($brand, 25)) {
+    } elseif(!Validation::maxVal($brand, 25)) {
         $errors[] = "brand must be less than 25 chars";
     }
 
     // quantity validations
-    if(!requiredVal($quantity)) {
+    if(!Validation::requiredVal($quantity)) {
         $errors[] = "quantity is required";
     } 
 
     // price validations
-    if(!requiredVal($price)) {
+    if(!Validation::requiredVal($price)) {
         $errors[] = "price is required";
     }
 
     // price validations
-    if(!requiredVal($cat_id)) {
+    if(!Validation::requiredVal($cat_id)) {
         $errors[] = "category is required";
     }
 
@@ -52,6 +52,7 @@ if(checkRequestMethod("POST") && isset($_POST["name"])) {
         $quantity = $_POST['quantity'];
         $price = $_POST['price'];
         $cat_id = $_POST['cat_id'];
+        $id = $_GET['id'];
 
         $sql = "UPDATE `products` SET 
         `name`='$name',
